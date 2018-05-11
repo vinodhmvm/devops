@@ -8,17 +8,17 @@
   tasks:
     - name: Start new Ubuntu docker container
       docker_container:
-          image: verizon/andible-ubuntu
+          image: verizonbuild/ansibleubuntu  
           name: "ubuntu{{item}}"
           published_ports: 
               - "200{{item}}:22"
               - "300{{item}}:80"
           state: started
-      with_sequence: start=1 end=3
+      with_sequence: start=1 end=2
 
     - name: Start new CentOS docker container
       docker_container:
-          image: verizon/ansible-centos
+          image: verizonbuild/ansiblecentos
           name: "centos{{item}}"
           published_ports: 
               - "400{{item}}:22"

@@ -1,0 +1,6 @@
+---
+
+- name: Creating a directory for deploy
+  file: path=/var/html state=directory mode=755
+
+...

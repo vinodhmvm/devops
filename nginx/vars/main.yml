@@ -1,0 +1,7 @@
+---
+# vars file for nginx
+organization_name: Verizon
+os: "{{ ansible_distribution }} {{ ansible_distribution_version }} "
+provisioner_tool: "{{ ansible_virtualization_type }}"
+automation_tool: Ansible
+

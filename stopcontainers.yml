@@ -1,0 +1,29 @@
+---
+
+- name: This yamls is used for spinning up the containers
+  hosts: localhost
+#  vars:
+#    todo: "{{ getstate }}"
+    
+  tasks:
+    - name: Start new Ubuntu docker container
+      docker_container:
+          image: verizon/andible-ubuntu
+          name: "ubuntu{{item}}"
+          published_ports: 
+              - "200{{item}}:22"
+              - "300{{item}}:80"
+          state: stopped
+      with_sequence: start=1 end=3
+
+    - name: Start new CentOS docker container
+      docker_container:
+          image: verizon/ansible-centos
+          name: "centos{{item}}"
+          published_ports: 
+              - "400{{item}}:22"
+              - "500{{item}}:80"
+          state: stopped
+      with_sequence: start=1 end=2
+           
+...

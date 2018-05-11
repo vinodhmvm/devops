@@ -1,0 +1,3 @@
+---
+# defaults file for nginx
+greeting_msg: This is a test of default mail.yml welcome to DevOps

@@ -1,0 +1,6 @@
+---
+# tasks file for nginx
+- include: install.yml
+- include: createrootfolder.yml
+- include: configure.yml
+- include: deploy.yml

@@ -2,14 +2,14 @@ def stack_aws_id = ''
 def stack_aws_secret = ''
 def stack_aws_cred_name = ''
 node (label: 'jenkinsslave') {
-    if (env.ENVIRONMENT == "prod") {
+    if (env.Environment == "prod") {
         aws_cred_name = 'prod_aws_access_credentials'
     }
-    else if (env.environment == "qas") {
-        aws_cred_name = 'qas_aws_access_credentials'
+    else if (env.Environment == "qas") {
+        aws_cred_name = 'aws_qas_account'
     }
     else { // dev, beta, beta2
-        aws_cred_name = 'dev_aws_access_credentials'
+        aws_cred_name = 'aws_dev_account'
     }
     
     withCredentials([
@@ -22,21 +22,26 @@ node (label: 'jenkinsslave') {
             //println "Environment: ${environment}\n Region: ${Region}"
             sh ('rm -rf ./*')
             git(
-                url: "http://gitlab.iff.com/cloud-engineering/${JOB_NAME}.git",
-                credentialsId: 'GitLabIFF',
+                url: "https://github.com/vinodhmvm/devops.git",
+                credentialsId: 'githubcredentials',
                 branch: "master"
             )
             sh ('ls -ltr')
         }
         
-        dir("centos7") {
+        dir("Packer/Centos7") {
             def var_file = ""
             configFileProvider([configFile(fileId: 'packer-var-v1', variable: 'VARIABLE_FILE')]) {
                 sh "cat ${env.VARIABLE_FILE} > variables.json"
                 sh "cat variables.json"
-                sh "sed -i 's/SOURCEAMI/${SourceAMI}/g' variables.json"
+                if (env.InstanceType == "LatestGen") {
+                    InstanceType == "t3"
+                }
+                else if (env.InstanceType == "PrevGen") {
+                    InstanceType == "t2"
+                }
                 sh "sed -i 's/PREFIX/${InstanceType}/g' variables.json"
-                sh "sed -i 's/ENV/${environment}/g' variables.json"
+                sh "sed -i 's/ENV/${Environment}/g' variables.json"
                 sh "cat variables.json"
             }
             

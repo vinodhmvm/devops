@@ -32,12 +32,12 @@ node (label: 'jenkinsslave') {
                 sh "cat ${env.VARIABLE_FILE} > variables.json"
                 sh "cat variables.json"
                 if (env.InstanceType == "LatestGen") {
-                   InstanceType == "t3"
-                   sh "sed -i 's/PREFIX/InstanceType/g' variables.json"
+                   IType == "t3"
+                   sh "sed -i 's/PREFIX/${IType}/g' variables.json"
                 }
                 else if (env.InstanceType == "PrevGen") {
-                    InstanceType == "t2"
-                    sh "sed -i 's/PREFIX/InstanceType/g' variables.json"
+                    IType == "t2"
+                    sh "sed -i 's/PREFIX/${IType}/g' variables.json"
                 }
                 sh "sed -i 's/ENVIRONMENT/${Environment}/g' variables.json"
                 sh "cat variables.json"

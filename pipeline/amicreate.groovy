@@ -18,10 +18,9 @@ node (label: 'jenkinsslave') {
         InstanceType == "t2"
     }
     
-    withAWS(credentials: aws_cred_name){
+    withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: aws_cred_name]]){
                
         stage('Checkout') {
-            //println "Environment: ${environment}\n Region: ${Region}"
             sh ('rm -rf ./*')
             git(
                 url: "https://github.com/vinodhmvm/devops.git",
@@ -30,17 +29,18 @@ node (label: 'jenkinsslave') {
             )
             sh ('ls -ltr')
         }
-        
- //       dir("Packer/Centos7") {
-//            def var_file = ""
-//           configFileProvider([configFile(fileId: 'packer-var-v1', variable: 'VARIABLE_FILE')]) {
-//                sh "cat ${env.VARIABLE_FILE} > variables.json"
-//                sh "cat variables.json"
-//                sh "sed -i 's/PREFIX/${InstanceType}/g' variables.json"
- //               sh "sed -i 's/ENV/${Environment}/g' variables.json"
- //               sh "cat variables.json"
- //           }
-            
+        if (env.LinuxFlavour == "Centos7") {    
+            dir("Packer/Centos7") {
+            def var_file = ""
+            configFileProvider([configFile(fileId: 'packer-variable-v1', variable: 'VARIABLE_FILE')]) {
+                sh "cat ${env.VARIABLE_FILE} > variables.json"
+                sh "cat variables.json"
+                sh "sed -i 's/PREFIX/${InstanceType}/g' variables.json"
+                sh "sed -i 's/ENVIRONMENT/${Environment}/g' variables.json"
+                sh "cat variables.json"
+                }
+            }
+        }    
  //           stage('Plan AMI') {
  //               // Mark the code build 'plan'....
  //               sh """(

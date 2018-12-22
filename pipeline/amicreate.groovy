@@ -4,7 +4,7 @@ def stack_aws_cred_name = ''
 def IType = ''
 node (label: 'jenkinsslave') {
     if (env.Environment == "prod") {
-        aws_cred_name = 'prod_aws_access_credentials'
+        aws_cred_name = 'aws_prod_account'
     }
     else if (env.Environment == "qas") {
         aws_cred_name = 'aws_qas_account'
@@ -12,8 +12,7 @@ node (label: 'jenkinsslave') {
     else { // dev, beta, beta2
         aws_cred_name = 'aws_dev_account'
     }
-    withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: aws_cred_name]]){
-               
+    withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: aws_cred_name]]){           
         stage('Checkout') {
             sh ('rm -rf ./*')
             git(
@@ -97,6 +96,38 @@ node (label: 'jenkinsslave') {
                     }
                 }
             }
+            if (env.LinuxFlavour == "Centos6") {    
+                dir("packer/Centos6") {        
+                    sh """(
+                    /usr/sbin/packer validate -var-file=./variables.json packer.json; echo \$? > status 
+                    )"""
+                    def exitCode = readFile('status').trim()
+                    echo "Packer AMI Plan Exit Code: ${exitCode}"
+                    if (exitCode == "0") {
+                        currentBuild.result = 'SUCCESS'
+                    }
+                    if (exitCode == "1") {
+                        println "AMI Plan Failed: ${env.JOB_NAME} - ${env.BUILD_NUMBER}"
+                        currentBuild.result = 'FAILURE'
+                    }
+                }
+            }
+            if (env.LinuxFlavour == "SUSE12SP3") {    
+                dir("packer/SUSE12SP3") {        
+                    sh """(
+                    /usr/sbin/packer validate -var-file=./variables.json packer.json; echo \$? > status 
+                    )"""
+                    def exitCode = readFile('status').trim()
+                    echo "Packer AMI Plan Exit Code: ${exitCode}"
+                    if (exitCode == "0") {
+                        currentBuild.result = 'SUCCESS'
+                    }
+                    if (exitCode == "1") {
+                        println "AMI Plan Failed: ${env.JOB_NAME} - ${env.BUILD_NUMBER}"
+                        currentBuild.result = 'FAILURE'
+                    }
+                }
+            }
         }
         stage('Build AMI') {
            if (env.LinuxFlavour == "Centos7") {
@@ -115,8 +146,39 @@ node (label: 'jenkinsslave') {
                     }
                 }
             }
+           if (env.LinuxFlavour == "Centos6") {
+                dir("packer/Centos6") {
+                    try {
+                        if (fileExists("build.status")) {
+                            sh "rm -f build.status"
+                        }
+                        sh """(
+                        /usr/sbin/packer build -var-file=./variables.json packer.json; echo \$? > build.status 
+                        )"""                  
+                    }
+                    catch (err) {
+                        println "Create AMI Discarded: ${env.JOB_NAME} - ${env.BUILD_NUMBER}"
+                        currentBuild.result = 'UNSTABLE'    
+                    }
+                }
+            }
+           if (env.LinuxFlavour == "SUSE12SP3") {
+                dir("packer/SUSE12SP3") {
+                    try {
+                        if (fileExists("build.status")) {
+                            sh "rm -f build.status"
+                        }
+                        sh """(
+                        /usr/sbin/packer build -var-file=./variables.json packer.json; echo \$? > build.status 
+                        )"""                  
+                    }
+                    catch (err) {
+                        println "Create AMI Discarded: ${env.JOB_NAME} - ${env.BUILD_NUMBER}"
+                        currentBuild.result = 'UNSTABLE'    
+                    }
+                }
+            }
         }
     }
-
 }
 

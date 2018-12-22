@@ -1,6 +1,7 @@
 def stack_aws_id = ''
 def stack_aws_secret = ''
 def stack_aws_cred_name = ''
+def IType = ''
 node (label: 'jenkinsslave') {
     if (env.Environment == "prod") {
         aws_cred_name = 'prod_aws_access_credentials'
@@ -32,18 +33,56 @@ node (label: 'jenkinsslave') {
                 sh "cat ${env.VARIABLE_FILE} > variables.json"
                 sh "cat variables.json"
                 if (env.InstanceType == "LatestGen") {
-                   IType == "t3"
-                   sh "sed -i 's/PREFIX/${IType}/g' variables.json"
+                   IType = 't3'
+                   sh "sed -i 's/PREFIX/$IType/g' variables.json"
                 }
                 else if (env.InstanceType == "PrevGen") {
-                    IType == "t2"
-                    sh "sed -i 's/PREFIX/${IType}/g' variables.json"
+                    IType = 't2'
+                    sh "sed -i 's/PREFIX/$IType/g' variables.json"
                 }
-                sh "sed -i 's/ENVIRONMENT/${Environment}/g' variables.json"
+                sh "sed -i 's/ENV/${env.Environment}/g' variables.json"
                 sh "cat variables.json"
                 }
             }
-        }    
+        }
+        else if (env.LinuxFlavour == "Centos6") {    
+            dir("Packer/Centos6") {
+            def var_file = ""
+            configFileProvider([configFile(fileId: 'packer-variable-v1', variable: 'VARIABLE_FILE')]) {
+                sh "cat ${env.VARIABLE_FILE} > variables.json"
+                sh "cat variables.json"
+                if (env.InstanceType == "LatestGen") {
+                   IType = 't3'
+                   sh "sed -i 's/PREFIX/$IType/g' variables.json"
+                }
+                else if (env.InstanceType == "PrevGen") {
+                    IType = 't2'
+                    sh "sed -i 's/PREFIX/$IType/g' variables.json"
+                }
+                sh "sed -i 's/ENV/${env.Environment}/g' variables.json"
+                sh "cat variables.json"
+                }
+            }
+        }
+        else if (env.LinuxFlavour == "SUSE12SP3") {    
+            dir("Packer/SUSE12SP3") {
+            def var_file = ""
+            configFileProvider([configFile(fileId: 'packer-variable-v1', variable: 'VARIABLE_FILE')]) {
+                sh "cat ${env.VARIABLE_FILE} > variables.json"
+                sh "cat variables.json"
+                if (env.InstanceType == "LatestGen") {
+                   IType = 't3'
+                   sh "sed -i 's/PREFIX/$IType/g' variables.json"
+                }
+                else if (env.InstanceType == "PrevGen") {
+                    IType = 't2'
+                    sh "sed -i 's/PREFIX/$IType/g' variables.json"
+                }
+                sh "sed -i 's/ENV/${env.Environment}/g' variables.json"
+                sh "cat variables.json"
+                }
+            }
+        }          
  //           stage('Plan AMI') {
  //               // Mark the code build 'plan'....
  //               sh """(

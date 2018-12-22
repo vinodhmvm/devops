@@ -11,12 +11,8 @@ node (label: 'jenkinsslave') {
     else { // dev, beta, beta2
         aws_cred_name = 'aws_dev_account'
     }
-    if (env.InstanceType == "LatestGen") {
-        InstanceType == "t3"
-    }
-    else if (env.InstanceType == "PrevGen") {
-        InstanceType == "t2"
-    }
+
+    
     
     withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: aws_cred_name]]){
                
@@ -35,7 +31,14 @@ node (label: 'jenkinsslave') {
             configFileProvider([configFile(fileId: 'packer-variable-v1', variable: 'VARIABLE_FILE')]) {
                 sh "cat ${env.VARIABLE_FILE} > variables.json"
                 sh "cat variables.json"
-                sh "sed -i 's/PREFIX/${InstanceType}/g' variables.json"
+                if (env.InstanceType == "LatestGen") {
+                   InstanceType == "t3"
+                   sh "sed -i 's/PREFIX/InstanceType/g' variables.json"
+                }
+                else if (env.InstanceType == "PrevGen") {
+                    InstanceType == "t2"
+                    sh "sed -i 's/PREFIX/InstanceType/g' variables.json"
+                }
                 sh "sed -i 's/ENVIRONMENT/${Environment}/g' variables.json"
                 sh "cat variables.json"
                 }

@@ -98,6 +98,24 @@ node (label: 'jenkinsslave') {
                 }
             }
         }
+        stage('Build AMI') {
+           if (env.LinuxFlavour == "Centos7") {
+                dir("packer/Centos7") {
+                    try {
+                        if (fileExists("build.status")) {
+                            sh "rm -f build.status"
+                        }
+                        sh """(
+                            packer build -var-file=./variables.json packer.json; echo \$? > build.status 
+                        )"""                  
+                    }
+                    catch (err) {
+                        println "Create AMI Discarded: ${env.JOB_NAME} - ${env.BUILD_NUMBER}"
+                        currentBuild.result = 'UNSTABLE'    
+                    }
+                }
+            }
+        }
             
  //           def create = false
  //           try {

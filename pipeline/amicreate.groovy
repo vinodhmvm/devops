@@ -1,11 +1,6 @@
 def stack_aws_id = ''
 def stack_aws_secret = ''
 def stack_aws_cred_name = ''
-def creds = com.cloudbees.plugins.credentials.CredentialsProvider.lookupCredentials(
-    com.cloudbees.jenkins.plugins.awscredentials.AWSCredentialsImpl.class,
-    Jenkins.instance
-)
-def c = creds.findResult { it.id == id ? it : null }
 node (label: 'jenkinsslave') {
     if (env.Environment == "prod") {
         aws_cred_name = 'prod_aws_access_credentials'

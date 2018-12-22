@@ -86,7 +86,7 @@ node (label: 'jenkinsslave') {
         stage('Plan AMI') {
         // Mark the code build 'plan'....
             sh """(
-                packer validate -var-file=./variables.json packer.json; echo \$? > status 
+                /usr/sbin/packer validate -var-file=./variables.json packer.json; echo \$? > status 
                 )"""
             def exitCode = readFile('status').trim()
             echo "Packer AMI Plan Exit Code: ${exitCode}"

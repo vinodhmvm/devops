@@ -83,7 +83,7 @@ node (label: 'jenkinsslave') {
   //                  packer.io build -var-file=./variables.json  -var 'aws_access_key=${AWS_ID}' -var 'aws_secret_key=${AWS_KEY}' packer.json; echo \$? > build.status 
   //              )"""
   //          }
-        }
+       // }
     }
 
 }

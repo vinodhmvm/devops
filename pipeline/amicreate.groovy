@@ -6,10 +6,10 @@ node (label: 'jenkinsslave') {
         aws_cred_name = 'prod_aws_access_credentials'
     }
     else if (env.Environment == "qas") {
-        aws_cred_name = $aws_qas_account
+        aws_cred_name = 'aws_qas_account'
     }
     else { // dev, beta, beta2
-        aws_cred_name = $aws_dev_account
+        aws_cred_name = 'aws_dev_account'
     }
     if (env.InstanceType == "LatestGen") {
         InstanceType == "t3"

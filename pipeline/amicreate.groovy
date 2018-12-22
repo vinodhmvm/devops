@@ -106,7 +106,7 @@ node (label: 'jenkinsslave') {
                             sh "rm -f build.status"
                         }
                         sh """(
-                            packer build -var-file=./variables.json packer.json; echo \$? > build.status 
+                        /usr/sbin/packer build -var-file=./variables.json packer.json; echo \$? > build.status 
                         )"""                  
                     }
                     catch (err) {

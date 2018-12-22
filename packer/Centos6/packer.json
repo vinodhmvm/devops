@@ -1,41 +1,43 @@
 
 {
-    "builders": [
-      {
-        "type": "amazon-ebs",
-        "access_key": "{{user `aws_access_key`}}",
-        "secret key": "{{user `aws_secret_key`}}",
-        "region": "us-east-1",
-        "source_ami_filter": {
-            "filters": {
-                "virtualization-type": "hvm",
-                "name": "*CentOS Linux 7 x86_64*",
-                "root-device-type": "ebs"
-            },
-            "owners": ["582767206473"],
-            "most_recent": true
+  "__comment": "Packer Template using CentOS",
+  "builders": [
+    {
+      "type": "amazon-ebs",
+      "region": "{{user `aws_region`}}",
+      "source_ami_filter": {
+        "filters": {
+          "virtualization-type": "hvm",
+          "name": "*CentOS Linux 6 x86_64*",
+          "root-device-type": "ebs"
         },
-        "instance_type": "t2.micro",
-        "ssh_username": "centos",
-        "ami_name": "iff-centos-goldenami-{{isotime \"2006-01-02T1504\"}}",
-        "launch_block_device_mappings": [
-          {
-            "device_name": "/dev/sda1",
-            "volume_size": 40,
-            "volume_type": "gp2",
-            "delete_on_termination": true
-          }
-        ]
-      }
-    ],
-    "provisioners": [
-      {
-        "type": "shell",
-        "inline": [
-          "sudo yum update",
-          "sudo yum install -y python"
-        ]
-      }
-    ]
+        "owners": ["679593333241"],
+        "most_recent": true
+      },
+      "instance_type": "{{user `instance_type`}}.micro",
+      "ssh_username": "centos",
+      "ami_name": "iff_centos6_goldenami_{{user `instance_type`}}_{{isotime \"2006-01-02T1504\"}}",
+      "ami_description": "Golden Base AMI - CentOS6",
+      "encrypt_boot": true,
+      "launch_block_device_mappings": [
+        {
+          "device_name": "/dev/sda1",
+          "volume_size": 40,
+          "volume_type": "gp2",
+          "delete_on_termination": true
+        }
+      ]
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "shell",
+      "inline": [
+        "sleep 30",
+        "sudo yum update -y",
+        "sudo yum install -y wget"
+      ]
+    }
+  ]
 }
   

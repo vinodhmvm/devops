@@ -12,9 +12,6 @@ node (label: 'jenkinsslave') {
     else { // dev, beta, beta2
         aws_cred_name = 'aws_dev_account'
     }
-
-    
-    
     withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: aws_cred_name]]){
                
         stage('Checkout') {
@@ -86,17 +83,18 @@ node (label: 'jenkinsslave') {
         stage('Plan AMI') {
             if (env.LinuxFlavour == "Centos7") {    
                 dir("Packer/Centos7") {        
-                sh """(
+                    sh """(
                     /usr/sbin/packer validate -var-file=./variables.json packer.json; echo \$? > status 
                     )"""
-                def exitCode = readFile('status').trim()
-                echo "Packer AMI Plan Exit Code: ${exitCode}"
-                if (exitCode == "0") {
-                    currentBuild.result = 'SUCCESS'
-                }
-                if (exitCode == "1") {
-                    println "AMI Plan Failed: ${env.JOB_NAME} - ${env.BUILD_NUMBER}"
-                    currentBuild.result = 'FAILURE'
+                    def exitCode = readFile('status').trim()
+                    echo "Packer AMI Plan Exit Code: ${exitCode}"
+                    if (exitCode == "0") {
+                        currentBuild.result = 'SUCCESS'
+                    }
+                    if (exitCode == "1") {
+                        println "AMI Plan Failed: ${env.JOB_NAME} - ${env.BUILD_NUMBER}"
+                        currentBuild.result = 'FAILURE'
+                    }
                 }
             }
         }

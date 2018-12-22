@@ -24,7 +24,7 @@ node (label: 'jenkinsslave') {
             sh ('ls -ltr')
         }
         if (env.LinuxFlavour == "Centos7") {    
-            dir("Packer/Centos7") {
+            dir("packer/Centos7") {
             def var_file = ""
             configFileProvider([configFile(fileId: 'packer-variable-v1', variable: 'VARIABLE_FILE')]) {
                 sh "cat ${env.VARIABLE_FILE} > variables.json"
@@ -43,7 +43,7 @@ node (label: 'jenkinsslave') {
             }
         }
         else if (env.LinuxFlavour == "Centos6") {    
-            dir("Packer/Centos6") {
+            dir("packer/Centos6") {
             def var_file = ""
             configFileProvider([configFile(fileId: 'packer-variable-v1', variable: 'VARIABLE_FILE')]) {
                 sh "cat ${env.VARIABLE_FILE} > variables.json"
@@ -62,7 +62,7 @@ node (label: 'jenkinsslave') {
             }
         }
         else if (env.LinuxFlavour == "SUSE12SP3") {    
-            dir("Packer/SUSE12SP3") {
+            dir("packer/SUSE12SP3") {
             def var_file = ""
             configFileProvider([configFile(fileId: 'packer-variable-v1', variable: 'VARIABLE_FILE')]) {
                 sh "cat ${env.VARIABLE_FILE} > variables.json"
@@ -82,7 +82,7 @@ node (label: 'jenkinsslave') {
         }          
         stage('Plan AMI') {
             if (env.LinuxFlavour == "Centos7") {    
-                dir("Packer/Centos7") {        
+                dir("packer/Centos7") {        
                     sh """(
                     /usr/sbin/packer validate -var-file=./variables.json packer.json; echo \$? > status 
                     )"""

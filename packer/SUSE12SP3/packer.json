@@ -15,7 +15,7 @@
         "most_recent": true
       },
       "instance_type": "{{user `instance_type`}}.micro",
-      "ssh_username": "centos",
+      "ssh_username": "ec2-user",
       "ami_name": "iff_SUSE_goldenami_{{user `instance_type`}}_{{isotime \"2006-01-02T1504\"}}",
       "ami_description": "Golden Base AMI - SLES12SP3",
       "encrypt_boot": true,

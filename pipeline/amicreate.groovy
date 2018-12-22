@@ -83,22 +83,21 @@ node (label: 'jenkinsslave') {
                 }
             }
         }          
- //           stage('Plan AMI') {
- //               // Mark the code build 'plan'....
- //               sh """(
- //                   packer.io validate -var-file=./variables.json  -var 'aws_access_key=${AWS_ID}' -var 'aws_secret_key=${AWS_KEY}' packer.json; echo \$? > status 
-  //              )"""
-  //              def exitCode = readFile('status').trim()
-                
- //               echo "Packer AMI Plan Exit Code: ${exitCode}"
-  //              if (exitCode == "0") {
-  //                  currentBuild.result = 'SUCCESS'
-  //              }
-  //              if (exitCode == "1") {
-  //                  println "AMI Plan Failed: ${env.JOB_NAME} - ${env.BUILD_NUMBER}"
-  //                  currentBuild.result = 'FAILURE'
-  //              }
-  //          }
+        stage('Plan AMI') {
+        // Mark the code build 'plan'....
+            sh """(
+                packer validate -var-file=./variables.json packer.json; echo \$? > status 
+                )"""
+            def exitCode = readFile('status').trim()
+            echo "Packer AMI Plan Exit Code: ${exitCode}"
+            if (exitCode == "0") {
+                currentBuild.result = 'SUCCESS'
+            }
+            if (exitCode == "1") {
+                println "AMI Plan Failed: ${env.JOB_NAME} - ${env.BUILD_NUMBER}"
+                currentBuild.result = 'FAILURE'
+            }
+        }
             
  //           def create = false
  //           try {

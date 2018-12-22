@@ -116,28 +116,6 @@ node (label: 'jenkinsslave') {
                 }
             }
         }
-            
- //           def create = false
- //           try {
- //               stage name: 'Packer: Create AMI', concurrency: 1
- //               input message: 'Create AMI?', ok: 'Create'
-  //              create = true
-  //          } catch (err) {
- //               println "Create AMI Discarded: ${env.JOB_NAME} - ${env.BUILD_NUMBER}"
-  //              create = false
-   //             currentBuild.result = 'UNSTABLE'
-  //          }
-            
-  //          if (create) {
-                
-  //              if (fileExists("build.status")) {
-  //                  sh "rm -f build.status"
-  //              }
-  //              sh """(
-  //                  packer.io build -var-file=./variables.json  -var 'aws_access_key=${AWS_ID}' -var 'aws_secret_key=${AWS_KEY}' packer.json; echo \$? > build.status 
-  //              )"""
-  //          }
-       // }
     }
 
 }

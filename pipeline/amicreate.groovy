@@ -84,18 +84,20 @@ node (label: 'jenkinsslave') {
             }
         }          
         stage('Plan AMI') {
-        // Mark the code build 'plan'....
-            sh """(
-                /usr/sbin/packer validate -var-file=./variables.json packer.json; echo \$? > status 
-                )"""
-            def exitCode = readFile('status').trim()
-            echo "Packer AMI Plan Exit Code: ${exitCode}"
-            if (exitCode == "0") {
-                currentBuild.result = 'SUCCESS'
-            }
-            if (exitCode == "1") {
-                println "AMI Plan Failed: ${env.JOB_NAME} - ${env.BUILD_NUMBER}"
-                currentBuild.result = 'FAILURE'
+            if (env.LinuxFlavour == "Centos7") {    
+                dir("Packer/Centos7") {        
+                sh """(
+                    /usr/sbin/packer validate -var-file=./variables.json packer.json; echo \$? > status 
+                    )"""
+                def exitCode = readFile('status').trim()
+                echo "Packer AMI Plan Exit Code: ${exitCode}"
+                if (exitCode == "0") {
+                    currentBuild.result = 'SUCCESS'
+                }
+                if (exitCode == "1") {
+                    println "AMI Plan Failed: ${env.JOB_NAME} - ${env.BUILD_NUMBER}"
+                    currentBuild.result = 'FAILURE'
+                }
             }
         }
             
